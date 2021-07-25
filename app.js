@@ -1,3 +1,5 @@
+const speciesArray = [];
+    
     // Create Dino Constructor
 
     function Dino(dinoObject){
@@ -8,7 +10,7 @@
         this.where = dinoObject.where;
         this.when = dinoObject.when;
         this.fact = dinoObject.fact;
-        this.factArray = [];
+        this.factArray = [this.fact];
     }
     //console.log(Dino);
     // Create Dino Objects
@@ -23,7 +25,7 @@
     function getValues(dinos) {
         dinos.map((dino) => jsonData.push(dino));
     }
-    console.log(jsonData);
+    //console.log(jsonData);
 
     // Create Human Object
     const human = {}
@@ -34,7 +36,7 @@ function getAllFormData(){
     document.getElementById('btn')
         .addEventListener('click',function () {
                 let inputs = document.getElementById('dino-compare').elements;
-                human['name'] = inputs['name'].value;
+                let name = human['name'] = inputs['name'].value;
                 let enteredFeet = parseInt(inputs['feet'].value);
                 let enteredInches = parseInt(inputs['inches'].value);
                 human['height'] = (enteredFeet * 12) + enteredInches;
@@ -45,7 +47,9 @@ function getAllFormData(){
                 if(Object.keys(human).length === 0){
                     return;
                 }
-                console.log(human);
+                //console.log(human);
+                let humanData = [name, '', 'human.png'];
+                speciesArray.push(humanData);
                 compareHumansWithDinos(jsonData, human);
             });
     
@@ -85,18 +89,17 @@ function compareHumansWithDinos(dino, human){
         const iterator = dFacts.values();
 
         for (const value of iterator) {
-        console.log(value);
+        //console.log(value);
         }
+        generateTiles(dObject);
+        //console.log(dObject);
     }
     
 }
-    
-
     // Create Dino Compare Method 1
     // NOTE: Weight in JSON file is in lbs, height in inches. 
     
     function compareHeight(dSpecies, dHeight, hHeight){
-        console.log(dHeight);
         let fact = "";
         if(dHeight < hHeight){
             let diff = Math.abs(hHeight - dHeight);
@@ -109,7 +112,6 @@ function compareHumansWithDinos(dino, human){
     // Create Dino Compare Method 2
     // NOTE: Weight in JSON file is in lbs, height in inches.
     function compareWeight(dSpecies, dWeight, hWeight){
-        console.log(dWeight);
         let fact = "";
         if(dWeight < hWeight){
             let diff = Math.abs(hWeight - dWeight);
@@ -122,7 +124,6 @@ function compareHumansWithDinos(dino, human){
     // Create Dino Compare Method 3
     // NOTE: Weight in JSON file is in lbs, height in inches.
     function compareDiet(dSpecies, dDiet, hDiet){
-        console.log(dDiet);
         let fact = "";
         if(dDiet === hDiet){
             fact = `${dSpecies} were ${dDiet}, just like you`;
@@ -130,10 +131,52 @@ function compareHumansWithDinos(dino, human){
             fact = `Unlike you, ${dSpecies} were ${dDiet}`;
         return fact;   
     }
-
     // Generate Tiles for each Dino in Array
-  
-        // Add tiles to DOM
+    function generateTiles(dObject){
+        const dinoArray = [];
+        let speciesName = dObject.species;
+        dinoArray.push(speciesName);
+        let randomFact = dObject.factArray[Math.floor(Math.random() * dObject.factArray.length)];
+        if(dObject.species === "Pigeon") {
+            randomFact = "All birds are living dinosaurs";
+        }
+        dinoArray.push(randomFact);
+        //,dObject.factArray);
+        let imageName = speciesName.toLowerCase() + '.png';
+        dinoArray.push(imageName);
+        //console.log(dinoArray);
+        speciesArray.push(dinoArray);
+        console.log("i m here");
+        console.log(speciesArray.length);
+        if(speciesArray.length === 9)
+            addTilesToDom();
+        //document.getElementById("grid").innerHTML = `<img src=images/${imageName}`>
+    }
+   
+     // Add tiles to DOM
+    function addTilesToDom(){
+        console.log("generate tiles");
+        console.log(speciesArray);
+        // let hvar = 'human.png';
+        // let imgPath = `images/${hvar}`;
+        
+        let tiles;
+    
+        speciesArray.forEach(function traverseThruArray(element){
+            let tileClassName = "grid-item";
+            let imageName = element[2];
+            let imgPath = `images/${imageName}`;
+            console.log(imgPath);
+            tiles =  `
+                    <div class=${tileClassName}>
+                        <h3>${element[0]}</h3>
+                        <img src=${imgPath}>
+                        <p>${element[1]}</p>
+                    </div>`
+            document.getElementById("grid").innerHTML += tiles;
+        });
+     
+    }
 
     // Remove form from screen
 
