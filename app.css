@@ -66,6 +66,9 @@ p {
 .grid-item:nth-child(4){
     background: #fac069f9;
 }
+.grid-item:nth-child(5) p{
+    background: transparent;
+}
 
 .grid-item:nth-child(5){
     background: #67a866f9;
@@ -171,4 +174,8 @@ select {
 .fine-print {
     display: block;
     font-size: 0.7em;
+}
+
+#err{
+    color:tomato;
 }

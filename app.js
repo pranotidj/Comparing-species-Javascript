@@ -1,64 +1,102 @@
 const speciesArray = [];
     
-    // Create Dino Constructor
+// Create Dino Constructor
 
-    function Dino(dinoObject){
-        this.species = dinoObject.species;
-        this.weight = dinoObject.weight;
-        this.height = dinoObject.height;
-        this.diet = dinoObject.diet;
-        this.where = dinoObject.where;
-        this.when = dinoObject.when;
-        this.fact = dinoObject.fact;
-        this.factArray = [this.fact];
-    }
+function Dino(dinoObject){
+    this.species = dinoObject.species;
+    this.weight = dinoObject.weight;
+    this.height = dinoObject.height;
+    this.diet = dinoObject.diet;
+    this.where = dinoObject.where;
+    this.when = dinoObject.when;
+    this.fact = dinoObject.fact;
+    this.factArray = [this.fact];
+}
     
-    // Create Dino Objects
+// Create Dino Objects
 
-    const jsonData = [];
-    fetch('./dino.json')
-            .then(data => data.json())
-            .then(items => {
-                let dinos = items.Dinos;
-                getValues(dinos);
-             });
-    function getValues(dinos) {
-        dinos.map((dino) => jsonData.push(dino));
-    }
-    // Create Human Object
-    const human = {}
-   
-    // Use IIFE to get human data from form
-function getAllFormData(){
-    console.log("func start");
-    document.getElementById('btn')
-        .addEventListener('click',function () {
-                let inputs = document.getElementById('dino-compare').elements;
-                let name = human['name'] = inputs['name'].value;
-                let enteredFeet = parseInt(inputs['feet'].value);
-                let enteredInches = parseInt(inputs['inches'].value);
-                human['height'] = (enteredFeet * 12) + enteredInches;
-                human['weight'] = inputs['weight'].value;
-                let s = document.getElementById('diet');
-                let enteredDiet = s.options[s.selectedIndex].value;
-                human['diet'] = enteredDiet;
-                if(Object.keys(human).length === 0){
-                    return;
-                }
-                compareHumansWithDinos(jsonData, human);
+const jsonData = [];
+fetch('./dino.json')
+        .then(data => data.json())
+        .then(items => {
+            let dinos = items.Dinos;
+            getValues(dinos);
             });
+function getValues(dinos) {
+    dinos.map((dino) => jsonData.push(dino));
+}
+// Create Human Object
+const human = {}
+
+// Use IIFE to get human data from form
+getAllFormData();
+function getAllFormData(){
+
+    document.getElementById('btn')
+        .addEventListener('click',function (event) {
+                
+            let inputs = document.getElementById('dino-compare').elements;
+            let flag = validateFormData(inputs);
+            if(!flag)
+                event.preventDefault();
+            human['name'] = inputs['name'].value;
+            let enteredFeet = parseInt(inputs['feet'].value);
+            let enteredInches = parseInt(inputs['inches'].value);
+            human['height'] = (enteredFeet * 12) + enteredInches;
+            human['weight'] = inputs['weight'].value;
+            let s = document.getElementById('diet');
+            let enteredDiet = s.options[s.selectedIndex].value;
+            human['diet'] = enteredDiet;
+            if(Object.keys(human).length === 0){
+                return;
+            }
+            compareHumanWithDinos(jsonData, human);
+
+        });
     
         
 }
 
-getAllFormData();
+function validateFormData(inputs){
+    //const err = { empty_val : [], flag};
+    let name = inputs['name'].value;
+    let feet = inputs['feet'].value;
+    let inches = inputs['inches'].value;
+    let weight = inputs['weight'].value;
+    let errorMessage = '';
+    let validDataError = '';
+    let flag = true;
+    if(isEmpty(name)){
+        errorMessage += " name"; 
+        flag = false;
+    }
+    
+    if(isEmpty(feet) && isEmpty(inches)){
+        errorMessage += " height";
+        flag = false;
+    }
+
+    if(isEmpty(weight)){
+        errorMessage += " weight ";  
+        flag = false;
+    }
+    
+    if(!flag){
+        console.log(errorMessage);
+        document.getElementById("err").innerHTML = "Enter your" + errorMessage;
+        return;
+    }
+    return flag;
+
+}
+
 
 function isEmpty(str) {
     return (!str || str.length === 0 );
 }
 
    
-function compareHumansWithDinos(dino, human){
+function compareHumanWithDinos(dino, human){
     console.log("in compare");
     let dinoArray = [];
     for(i = 0; i < jsonData.length; i++){
@@ -95,7 +133,7 @@ function compareHumansWithDinos(dino, human){
         let fact = "";
         if(dHeight < hHeight){
             let diff = Math.abs(hHeight - dHeight);
-            fact = `Wow! You are taller than ${dSpecies} by ${diff}`;
+            fact = `You are taller than ${dSpecies} by ${diff} inches`;
         }else
             fact = `${dSpecies} is taller than you`;
          return fact;   
@@ -107,9 +145,9 @@ function compareHumansWithDinos(dino, human){
         let fact = "";
         if(dWeight < hWeight){
             let diff = Math.abs(hWeight - dWeight);
-            fact = `Surprisingly, you are heavier than ${dSpecies} by ${diff}`;
+            fact = `Surprisingly, you are heavier than ${dSpecies} by ${diff} lbs`;
         }else
-            fact = `No doubt about this! They had to be heavier to ruled the earth`;
+            fact = `${dSpecies} heavier than you`;
         return fact;   
     }
     
@@ -123,6 +161,7 @@ function compareHumansWithDinos(dino, human){
             fact = `Unlike you, ${dSpecies} were ${dDiet}`;
         return fact;   
     }
+    
     // Generate Tiles for each Dino in Array
     function generateDinoArray(dObject){
         const dinoArray = [];
@@ -172,7 +211,9 @@ function compareHumansWithDinos(dino, human){
                     </div>`
             document.getElementById("grid").innerHTML += tiles;
         });
-     
+        if(!isEmpty(tiles))
+             document.getElementById('dino-compare').style.display = "none";
+    
     }
 
     // Remove form from screen
