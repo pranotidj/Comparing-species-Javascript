@@ -12,7 +12,7 @@ const speciesArray = [];
         this.fact = dinoObject.fact;
         this.factArray = [this.fact];
     }
-    //console.log(Dino);
+    
     // Create Dino Objects
 
     const jsonData = [];
@@ -25,8 +25,6 @@ const speciesArray = [];
     function getValues(dinos) {
         dinos.map((dino) => jsonData.push(dino));
     }
-    //console.log(jsonData);
-
     // Create Human Object
     const human = {}
    
@@ -47,9 +45,6 @@ function getAllFormData(){
                 if(Object.keys(human).length === 0){
                     return;
                 }
-                //console.log(human);
-                let humanData = [name, '', 'human.png'];
-                speciesArray.push(humanData);
                 compareHumansWithDinos(jsonData, human);
             });
     
@@ -65,6 +60,7 @@ function isEmpty(str) {
    
 function compareHumansWithDinos(dino, human){
     console.log("in compare");
+    let dinoArray = [];
     for(i = 0; i < jsonData.length; i++){
         dObject = new Dino(jsonData[i]);
         dSpecies = dObject.species;
@@ -86,14 +82,10 @@ function compareHumansWithDinos(dino, human){
             dFacts.push(fact3);     //adding facts to Dino objects
         }
 
-        const iterator = dFacts.values();
-
-        for (const value of iterator) {
-        //console.log(value);
-        }
-        generateTiles(dObject);
-        //console.log(dObject);
+        dinoArray.push(generateDinoArray(dObject));
+        
     }
+    generateTiles(dinoArray, human);
     
 }
     // Create Dino Compare Method 1
@@ -132,7 +124,7 @@ function compareHumansWithDinos(dino, human){
         return fact;   
     }
     // Generate Tiles for each Dino in Array
-    function generateTiles(dObject){
+    function generateDinoArray(dObject){
         const dinoArray = [];
         let speciesName = dObject.species;
         dinoArray.push(speciesName);
@@ -141,26 +133,31 @@ function compareHumansWithDinos(dino, human){
             randomFact = "All birds are living dinosaurs";
         }
         dinoArray.push(randomFact);
-        //,dObject.factArray);
-        let imageName = speciesName.toLowerCase() + '.png';
+        let speciesImage = encodeURI(speciesName.toLowerCase());
+        let imageName =  speciesImage + '.png';
         dinoArray.push(imageName);
-        //console.log(dinoArray);
-        speciesArray.push(dinoArray);
+        return dinoArray;
+    }
+   function generateTiles(dinoArray, human){
+        if(isEmpty(human.name)){
+            return;
+        }
+        let speciesArray = [...dinoArray];
+        let humanData = [human.name, '', 'human.png'];
+        speciesArray.splice(4, 0, humanData);   // added human at the center of an matrix
+        console.log(speciesArray);
         console.log("i m here");
         console.log(speciesArray.length);
         if(speciesArray.length === 9)
-            addTilesToDom();
-        //document.getElementById("grid").innerHTML = `<img src=images/${imageName}`>
-    }
+            addTilesToDom(speciesArray);
+   }
+    
    
+
      // Add tiles to DOM
-    function addTilesToDom(){
+    function addTilesToDom(speciesArray){
         console.log("generate tiles");
-        console.log(speciesArray);
-        // let hvar = 'human.png';
-        // let imgPath = `images/${hvar}`;
-        
-        let tiles;
+        let tiles = '';
     
         speciesArray.forEach(function traverseThruArray(element){
             let tileClassName = "grid-item";
