@@ -1,5 +1,3 @@
-const speciesArray = [];
-    
 // Create Dino Constructor
 
 function Dino(dinoObject){
@@ -25,8 +23,47 @@ fetch('./dino.json')
 function getValues(dinos) {
     dinos.map((dino) => jsonData.push(dino));
 }
+
+
+
 // Create Human Object
 const human = {}
+
+
+//Check if string is empty
+function isEmpty(str) {
+    return (!str || str.length === 0 );
+}
+
+function validateFormData(inputs){
+    let name = inputs['name'].value;
+    let feet = inputs['feet'].value;
+    let inches = inputs['inches'].value;
+    let weight = inputs['weight'].value;
+    let errorMessage = '';
+    let flag = true;
+    if(isEmpty(name)){
+        errorMessage += " name"; 
+        flag = false;
+    }
+    
+    if(isEmpty(feet) && isEmpty(inches)){
+        errorMessage += " height";
+        flag = false;
+    }
+
+    if(isEmpty(weight)){
+        errorMessage += " weight ";  
+        flag = false;
+    }
+    
+    if(!flag){
+        document.getElementById("err").innerHTML = "Enter your" + errorMessage;
+        return;
+    }
+    return flag;
+
+}
 
 // Use IIFE to get human data from form
 getAllFormData();
@@ -58,47 +95,10 @@ function getAllFormData(){
         
 }
 
-function validateFormData(inputs){
-    //const err = { empty_val : [], flag};
-    let name = inputs['name'].value;
-    let feet = inputs['feet'].value;
-    let inches = inputs['inches'].value;
-    let weight = inputs['weight'].value;
-    let errorMessage = '';
-    let validDataError = '';
-    let flag = true;
-    if(isEmpty(name)){
-        errorMessage += " name"; 
-        flag = false;
-    }
-    
-    if(isEmpty(feet) && isEmpty(inches)){
-        errorMessage += " height";
-        flag = false;
-    }
-
-    if(isEmpty(weight)){
-        errorMessage += " weight ";  
-        flag = false;
-    }
-    
-    if(!flag){
-        document.getElementById("err").innerHTML = "Enter your" + errorMessage;
-        return;
-    }
-    return flag;
-
-}
-
-
-function isEmpty(str) {
-    return (!str || str.length === 0 );
-}
-
    
 function compareHumanWithDinos(dino, human){
    let dinoArray = [];
-    for(i = 0; i < jsonData.length; i++){
+    for(let i = 0; i < jsonData.length; i++){
         dObject = new Dino(jsonData[i]);
         dSpecies = dObject.species;
         dHeight = dObject.height;
